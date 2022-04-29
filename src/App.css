@@ -1,42 +1,70 @@
+body {
+    background-color: #333;
+    color: #fff;
+}
+
 .App {
-  text-align: center;
+    text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.listBg {
+    background-color: #555;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    padding: 10px 140px 10px 15px;
+    text-align: left;
+    font-size: 22px;
+    position: relative;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+.listBg div {
+    display: flex;
+    align-items: center;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+.listNumber {
+    color: #999;
+    border: 1px solid #999;
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    text-align: center;
+    font-size: 14px;
+    margin-right: 8px;
+    align-items: center;
+    justify-content: center;
 }
 
-.App-link {
-  color: #61dafb;
+.listBg .listText {
+    flex: 1;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.listBg .done .listText {
+    text-decoration: line-through;
+    opacity: 0.3;
 }
 
-button {
-  font-size: calc(10px + 2vmin);
+.listBg .iconsWrap {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 15px;
+    width: auto;
+    display: inline-block;
+}
+
+.listBg .iconsWrap span {
+    display: inline-block;
+    margin: 0px 10px 0px 10px;
+    cursor: pointer;
+    color: #00ff89;
+}
+
+.listBg .iconsWrap span:hover {
+    color: yellow;
+}
+
+.mr-20 {
+    margin-right: 20px;
 }
