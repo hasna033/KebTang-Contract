@@ -15,6 +15,7 @@ body {
     text-align: left;
     font-size: 22px;
     position: relative;
+<<<<<<< HEAD
 }
 
 .listBg div {
@@ -59,6 +60,60 @@ body {
     margin: 0px 10px 0px 10px;
     cursor: pointer;
     color: #00ff89;
+=======
+}
+
+.listBg div {
+    display: flex;
+    align-items: center;
+}
+
+.listNumber {
+    color: #999;
+    border: 1px solid #999;
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    text-align: center;
+    font-size: 14px;
+    margin-right: 8px;
+    align-items: center;
+    justify-content: center;
+}
+
+.listBg .listText {
+    flex: 1;
+}
+
+.listBg .done .listText {
+    text-decoration: line-through;
+    opacity: 0.3;
+}
+
+.listBg .iconsWrap {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 15px;
+    width: auto;
+    display: inline-block;
+}
+
+.listBg .iconsWrap span {
+    display: inline-block;
+    margin: 0px 10px 0px 10px;
+    cursor: pointer;
+    color: #00ff89;
+}
+
+.listBg .iconsWrap span:hover {
+    color: yellow;
+}
+
+.mr-20 {
+    margin-right: 20px;
+>>>>>>> 3324d43b918b02a6d61cc8b2ba677deaf5c6788c
 }
 
 .listBg .iconsWrap span:hover {
