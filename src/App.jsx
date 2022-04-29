@@ -6,35 +6,10 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import {ethers} from 'ethers';
 
-//import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import './App.css';
 
-//import Navbar from './Navbar';
-//import Users from './Users';
-
-
-const ADDRESS = "0xCDecf16fDCD0FC7b3D3bf2010b8EF72052747d10";
+const ADDRESS = "0x0B47841653B28142a219B2656567E19A314b0E1d";
 const ABI = [
-	{
-		"inputs": [],
-		"name": "donate",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_message",
-				"type": "string"
-			}
-		],
-		"name": "setMessage",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
 	{
 		"inputs": [],
 		"name": "getBalance",
@@ -50,15 +25,23 @@ const ABI = [
 	},
 	{
 		"inputs": [],
-		"name": "getMessage",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
+		"name": "transfer1",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "transfer2",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "transfer3",
+		"outputs": [],
+		"stateMutability": "payable",
 		"type": "function"
 	}
 ]
@@ -66,139 +49,127 @@ const ABI = [
 let kTContract;
 
 function App() {
+    //list of transection
+    const [tranfer, setTransfer] = useState([]);
 
-	//list of transection
-	const [tranfer, setTransfer] = useState([
-		{"id": 1, "uName": "List 1", "status": false},
-		{"id": 2, "uName": "List 2", "status": false}
-	]);
+    // New list of transection
+    const [newTranfer, setNewTransfer] = useState('');
 
-	// Temp State
-	const [newTranfer, setNewTransfer] = useState('');
-	const [updateData, setUpdateData] = useState('');
-
-	// Add transfer
-	const addTransfer = () => {
+    // Record transection
+    const addTransfer = () => {
 		if(newTranfer) {
 			let num = tranfer.length + 1;
-			let newEntry = { id: num, uName: newTranfer, status: false};
+			let newEntry = { id: num, uName: newTranfer, amount: 0.01};
 			setTransfer([...tranfer, newEntry]);
 			setNewTransfer('');
 		}
 	}
 
-	// Delete task
-	const deleteTransfer = (id) => {
+    // Delete List of transection
+    const deleteTransfer = (id) => {
 		let newList = tranfer.filter( list => list.id !== id);
 		setTransfer(newList);
 	}
 
+	// Connect with Smart contract && sign by Metamask
+    useEffect( () => {
+      connect();
+    }, [] );
 
-  useEffect( () => {
-    connect();
-  }, [] );
+    async function connect() {
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+      kTContract = new ethers.Contract(ADDRESS, ABI, signer);
+      alert("Connection successful ^^", kTContract);
+    }
 
-    
-  async function connect() {
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    await provider.send("eth_requestAccounts", []);
-    const signer = provider.getSigner();
-    kTContract = new ethers.Contract(ADDRESS, ABI, signer);
-    console.log("Hello: ", kTContract);
-  }
-
-  async function getMessage() {
-    const mesg = await kTContract.getMessage()
-    setMessage(mesg);
-    console.log("Get message: " + mesg)
-  }
-
-  async function setUIMessage() {
-    const tx = await kTContract.setMessage(text);
-    await tx.wait();
-    await getMessage();
-  }
-
-  async function donate() {
-    const tx = await kTContract.donate({value: ethers.utils.parseEther("0.001")});
-    await tx.wait();
-    console.log("Donate successful");
-  }
-
-  async function getBalance() {
-    const balance = await kTContract.getBalance();
-    console.log("Balance: " + balance);
-  }
-
-  return (
-   <div className='container App'>
-
-	   <br /> <br />
-	   <h1> KEB-TANG </h1>
-	   <br /> <br />
-
-	   {/* Add transfer list Form */}
-
-		<div className='row'>
-			<div className='col'>
-				<input 
-					value={newTranfer}
-					onChange={ (e) => setNewTransfer(e.target.value)}
-					className='form-control form-control-lg' 
-					/>
-			</div>
-			<div className='col-auto'>
-				<button 
-					onClick={addTransfer}
-					className='btn btn-lg btn-success'
-				>Transfer</button>
-			</div>
-		</div>
-		<br />
-	
-
-	   {/* Display Kep-Tang */}
-
-	   {tranfer && tranfer.length ? '' : 'No Transfer...'}
-
-	   {tranfer && tranfer 
-	   	  .sort((a,b) => a.id > b.id ? 1 : -1)
-	   	  .map( (list, index) => {
-			return(
-				<React.Fragment key={list.id}>
-
-					<div className="col listBg">
-						<div className={list.status ? 'done' : ''}>
-							<span className='listNumber'>{index + 1}</span>
-							<span className='listText'>{list.uName}</span>
-						</div>
-						<div className='iconsWrap'>
-							
-							<span title='Delete'
-								  onClick={() => deleteTransfer(list.id)}
-							>
-								<FontAwesomeIcon icon={faTrashCan}/>
-							</span>
-						</div>
-					
-					</div>
-
-				</React.Fragment>
-			)
-		  })
-	   }
-
-     {/* <center>
+	// choice 1: amount = 0.01 Ether
+    async function transfer1() {
+      const tx = await kTContract.transfer1({value: ethers.utils.parseEther("0.01")});
+      await tx.wait();
+      alert("Transfer 0.01 ether successful!!");
       
-     <input type="text" onChange={ (e) => setText(e.target.value)}/> <br />
-     <button onClick={() => getMessage()}>Get message</button><br />
-     <button onClick={() => setUIMessage()}>Set message</button>
-	 <button onClick={() => donate()}>Donate</button>
-	 <button onClick={() => getBalance()}>Balance</button>
-     </center> */}
-    
-   </div>
-  )
-}
+    }
 
+	// choice 2: amount = 0.001 Ether
+    async function transfer2() {
+      const tx2 = await kTContract.transfer2({value: ethers.utils.parseEther("0.001")});
+      await tx2.wait();
+      alert("Transfer 0.001 ether successful!!");
+    }
+
+	// choice 3: amount = 0.0001 Ether
+    const transfer3 = async () => {
+      const tx3 = await kTContract.transfer3({value: ethers.utils.parseEther("0.0001")});
+      await tx3.wait();
+      alert("Transfer 0.0001 ether successful!!");
+    };
+
+	// Check total balance of all transection
+    async function getBalance() {
+      const balance = await kTContract.getBalance();
+      alert("Total Balance: " + balance);
+    }
+
+    return (
+		// User Interface
+     	<div className='container App'> <br />
+         	<h1> KEB-TANG SYSTEM </h1> <br />
+         	<img src="\src\p3.png" alt="80" height="80" />
+			<form>
+				<br />
+				<h5>Please enter information</h5>
+			</form>
+
+			{/* Add transfer list Form */}
+			<div className='row'>
+              	<div className='col'>
+                  	<input 
+						value={newTranfer}
+						onChange={ (e) => setNewTransfer(e.target.value)}
+						className='form-control form-control-lg' 
+						placeholder="Enter your name"
+						/><br />
+
+                      	<h6>Please select the amount you want.</h6> <br />
+						<div>
+							<button onClick={() => transfer1()} class="btn btn-outline-success">0.01 Ether</button>
+							<button onClick={() => transfer2()} class="btn btn-outline-success">0.001 Ether</button>
+							<button onClick={() => transfer3()} class="btn btn-outline-success">0.0001 Ether</button>
+						</div><br />
+                       <button 
+                          onClick={addTransfer}
+                          className='btn btn-lg btn-success'
+                       >Record Transections</button>
+              	</div>
+          	</div><br />
+
+         	{/* Display Kep-Tang */}
+		 	{tranfer && tranfer.length ? '' : 'No Transfer...'}
+			{tranfer && tranfer 
+            	.sort((a,b) => a.id > b.id ? 1 : -1)
+            	.map( (list, index) => {
+              		return(
+                  		<React.Fragment key={list.id}>
+							<div className="col listBg">
+								<div className={list.status ? 'done' : ''}>
+									<span className='listNumber'>{index + 1}</span>
+									<span className='listText'>{list.uName}</span>
+									<span className='listValue'>{list.amount + ' Ether'}</span>
+								</div>
+								<div className='iconsWrap'>
+									<span title='Delete' onClick={() => deleteTransfer(list.id)}>
+										<FontAwesomeIcon icon={faTrashCan}/>
+									</span>
+								</div>
+							</div>
+                  		</React.Fragment>
+              		)
+            	})
+         	}
+          	<button onClick={() => getBalance()} className='btn btn-lg btn-success'>Total Balance</button>
+     	</div>
+    )
+}
 export default App
